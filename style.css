@@ -1,0 +1,225 @@
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 20px 15px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* Layout */
+  .top-container {
+    display: flex;
+    gap: 40px;
+    /* max-width: 1100px; */
+    width: 95vw;
+    margin: 0 auto 30px auto;
+    align-items: flex-start;
+  }
+  form#searchForm {
+    flex: 0 0 60%;
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  form#searchForm:hover {
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+  }
+  .suggested-types-container {
+    flex: 0 0 40%;
+    background: #fff;
+    padding: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    height: fit-content;
+    max-height: 530px;
+    overflow: scroll;
+  }
+
+  /* Labels and inputs */
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #34495e;
+    font-size: 15px;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    border: 1.8px solid #ced6e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline-color: #3498db;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+  }
+
+  /* Business Types Tag Input */
+  #typeInput {
+    display: flex;
+    flex-direction: column;
+  }
+  #typeText {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.8px solid #ced6e0;
+    font-size: 15px;
+    outline-color: #3498db;
+    transition: border-color 0.3s ease;
+  }
+  #typeText:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+  }
+  #typeTags {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    background: #3498db;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.4);
+    transition: background-color 0.3s ease;
+  }
+  .tag button {
+    background: transparent;
+    border: none;
+    color: #ecf0f1;
+    font-weight: 700;
+    font-size: 18px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .tag button:hover {
+    color: #e74c3c;
+  }
+
+  /* Buttons */
+  button[type="submit"],
+  button[type="button"],
+  .preset-btn {
+    cursor: pointer;
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button[type="submit"]:hover,
+  button[type="button"]:hover,
+  .preset-btn:hover {
+    background: #1c5980;
+  }
+
+  /* Suggested Business Types */
+  #presetTypes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+  .preset-btn {
+    background: #27ae60;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.4);
+    user-select: none;
+  }
+  .preset-btn:hover {
+    background: #1e8449;
+  }
+
+  /* Table */
+  #resultsTable {
+    /* max-width: 1100px; */
+    width: 95vw;
+    margin: 0 auto 50px auto;
+    border-collapse: collapse;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    display: none;
+  }
+  #resultsTable th,
+  #resultsTable td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 15px;
+    color: #34495e;
+  }
+  #resultsTable th {
+    background: #2980b9;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  #resultsTable tbody tr:hover {
+    background: #d6eaf8;
+    cursor: default;
+  }
+
+  /* Responsive */
+  @media (max-width: 650px) {
+    .top-container {
+      flex-direction: column;
+    }
+    form#searchForm, .suggested-types-container {
+      flex: none;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    button[type="submit"], button[type="button"], .preset-btn {
+      width: 100%;
+    }
+    #typeTags {
+      gap: 5px;
+    }
+    #resultsTable {
+      width: 100%;
+    }
+  }
