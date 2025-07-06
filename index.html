@@ -1,12 +1,10 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Lead Generator</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Loader Overlay */
     #loadingOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -28,6 +26,38 @@
     @keyframes spin {
       0% { transform: rotate(0deg);}
       100% { transform: rotate(360deg);}
+    }
+    .preset-btn {
+      margin: 2px 4px 2px 0;
+      padding: 6px 12px;
+      border: 1px solid #2980b9;
+      background-color: #eaf3fb;
+      color: #2980b9;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .preset-btn:hover {
+      background-color: #2980b9;
+      color: white;
+    }
+    #typeTags .tag {
+      display: inline-block;
+      background-color: #2980b9;
+      color: white;
+      padding: 4px 8px;
+      margin: 2px;
+      border-radius: 3px;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    #typeTags .tag button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: bold;
+      margin-left: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -67,11 +97,12 @@
 
     <div class="suggested-types-container">
       <h3>Suggested Business Types:</h3>
+      <input type="text" id="typeSearch" placeholder="Search business types..." style="width: 100%; margin-bottom: 10px; box-sizing: border-box;" />
       <div id="presetTypes"></div>
     </div>
   </div>
 
-  <table id="resultsTable" border="1">
+  <table id="resultsTable" border="1" style="margin-top:1rem; width: 100%; border-collapse: collapse;">
     <thead>
       <tr>
         <th>#</th> 
@@ -80,6 +111,7 @@
         <th style="width: 200px;">Phone</th>
         <th>Website</th>
         <th>Rating</th>
+        <th style="width: 300px;">Type</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -101,15 +133,27 @@
       const km = (this.value / 1000).toFixed(2);
       toKmDisplay.textContent = `(${km} km)`;
     });
+
     const presetTypes = [
-      'accounting', 'bakery', 'bank', 'bar', 'beauty_salon', 'bicycle_store',
-      'book_store', 'car_repair', 'car_wash', 'clothing_store', 'dentist', 'doctor',
-      'electrician', 'electronics_store', 'florist', 'furniture_store', 'gym',
-      'hair_care', 'hardware_store', 'home_goods_store', 'insurance_agency',
-      'jewelry_store', 'laundry', 'lawyer', 'locksmith', 'meal_takeaway',
-      'moving_company', 'painter', 'pet_store', 'pharmacy', 'plumber', 'real_estate_agency',
-      'roofing_contractor', 'school', 'shoe_store', 'spa', 'storage', 'supermarket',
-      'travel_agency', 'veterinary_care'
+      'accounting', 'airport', 'amusement_park', 'aquarium', 'art_gallery', 'atm',
+      'bakery', 'bank', 'bar', 'beauty_salon', 'bicycle_store', 'book_store',
+      'bowling_alley', 'bus_station', 'cafe', 'campground', 'car_dealer',
+      'car_rental', 'car_repair', 'car_wash', 'casino', 'cemetery', 'church',
+      'city_hall', 'clothing_store', 'convenience_store', 'courthouse', 'dentist',
+      'department_store', 'doctor', 'drugstore', 'electrician', 'electronics_store',
+      'embassy', 'fire_station', 'florist', 'funeral_home', 'furniture_store',
+      'gas_station', 'gym', 'hair_care', 'hardware_store', 'hindu_temple',
+      'home_goods_store', 'hospital', 'insurance_agency', 'jewelry_store', 'laundry',
+      'lawyer', 'library', 'light_rail_station', 'liquor_store',
+      'local_government_office', 'locksmith', 'lodging', 'meal_delivery',
+      'meal_takeaway', 'mosque', 'movie_rental', 'movie_theater', 'moving_company',
+      'museum', 'night_club', 'painter', 'park', 'parking', 'pet_store', 'pharmacy',
+      'physiotherapist', 'plumber', 'police', 'post_office', 'primary_school',
+      'real_estate_agency', 'restaurant', 'roofing_contractor', 'rv_park', 'school',
+      'secondary_school', 'shoe_store', 'shopping_mall', 'spa', 'stadium', 'storage',
+      'store', 'subway_station', 'supermarket', 'synagogue', 'taxi_stand',
+      'tourist_attraction', 'train_station', 'transit_station', 'travel_agency',
+      'university', 'veterinary_care', 'zoo'
     ];
 
     const presetContainer = document.getElementById('presetTypes');
@@ -125,6 +169,16 @@
         }
       };
       presetContainer.appendChild(btn);
+    });
+
+    // Searchable filter for suggested types
+    const typeSearchInput = document.getElementById('typeSearch');
+    typeSearchInput.addEventListener('input', () => {
+      const filter = typeSearchInput.value.trim().toLowerCase();
+      Array.from(presetContainer.children).forEach(button => {
+        const text = button.textContent.toLowerCase();
+        button.style.display = text.includes(filter) ? '' : 'none';
+      });
     });
 
     input.addEventListener('keypress', function (e) {
@@ -169,15 +223,6 @@
         const res = await fetch('api.php?' + params.toString());
         const data = await res.json();
 
-        if (data.length === 0) {
-            alert('No results found.');
-            table.style.display = 'none';
-            countDisplay.textContent = 'Found 0 businesses.';
-            return;
-        }
-        const count = data.length
-
-
         const table = document.getElementById('resultsTable');
         const tbody = table.querySelector('tbody');
         tbody.innerHTML = '';
@@ -185,25 +230,26 @@
         if (data.length === 0) {
           alert('No results found.');
           table.style.display = 'none';
+          document.getElementById('count').textContent = 'Found 0 businesses.';
           return;
         }
 
         data.forEach((biz, index) => {
-            const row = `<tr>
-                <td>${index + 1}</td>  <!-- Index, starting from 1 -->
-                <td>${biz.name}</td>
-                <td>${biz.address}</td>
-                <td>${biz.phone || ''}</td>
-                <td>${biz.website ? `<a href="${biz.website}" target="_blank" rel="noopener">Website</a>` : 'N/A'}</td>
-                <td>${biz.rating || ''}</td>
-                <td>${biz.status || ''}</td>
-            </tr>`;
-            tbody.innerHTML += row;
+          const typesList = Array.isArray(biz.types) ? biz.types.join(', ').replace(/_/g, ' ') : '';
+          const row = `<tr>
+            <td>${index + 1}</td>
+            <td>${biz.name}</td>
+            <td>${biz.address}</td>
+            <td>${biz.phone || ''}</td>
+            <td>${biz.website ? `<a href="${biz.website}" target="_blank" rel="noopener">Website</a>` : 'N/A'}</td>
+            <td>${biz.rating || ''}</td>
+            <td>${typesList}</td>
+            <td>${biz.status || ''}</td>
+          </tr>`;
+          tbody.innerHTML += row;
         });
 
-        const countDisplay = document.getElementById('count');
-        countDisplay.textContent = `Found ${count} businesses.`;
-        
+        document.getElementById('count').textContent = `Found ${data.length} businesses.`;
         table.style.display = 'table';
       } catch {
         alert('Error fetching data. Please try again.');
@@ -211,7 +257,7 @@
         loadingOverlay.style.display = 'none';
       }
     };
-    
+
     document.getElementById('exportBtn').onclick = () => {
       const formData = new FormData(document.getElementById('searchForm'));
       const params = new URLSearchParams(formData);
